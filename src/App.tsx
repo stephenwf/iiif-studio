@@ -7,7 +7,7 @@ import {
 	upgradeToPresentation4,
 } from "@iiif/parser/presentation-4";
 import { useMemo, useState } from "react";
-import ReactDiffViewer from "react-diff-viewer-continued";
+import ReactDiffViewer, { DiffMethod } from "react-diff-viewer-continued";
 import { validatePresentation4 } from "@iiif/parser/presentation-4/validator";
 
 type Workspace = "upgrade" | "validate";
@@ -166,6 +166,24 @@ const severityRank: Record<ValidationIssue["severity"], number> = {
 	info: 2,
 };
 
+const defaultPreferredJsonKeyOrder = [
+	"@context",
+	"id",
+	"@id",
+	"type",
+	"@type",
+	"label",
+	"summary",
+	"items",
+];
+
+// Optional override: list keys here in the order you want.
+const customPreferredJsonKeyOrder: string[] = [];
+
+const preferredJsonKeyOrder = customPreferredJsonKeyOrder.length
+	? customPreferredJsonKeyOrder
+	: defaultPreferredJsonKeyOrder;
+
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return !!value && typeof value === "object" && !Array.isArray(value);
 }
@@ -178,6 +196,66 @@ function parseJson(text: string): unknown {
 			error instanceof Error ? error.message : "Unknown parse error";
 		throw new Error(`Invalid JSON: ${message}`);
 	}
+}
+
+function sortJsonKeys(
+	value: unknown,
+	priorityOrder: string[] = preferredJsonKeyOrder,
+): unknown {
+	const priorityMap = new Map(
+		priorityOrder.map((key, index) => [key, index] as const),
+	);
+	const normalizeKey = (key: string) => key.replace(/@/g, "");
+
+	function sortNode(node: unknown): unknown {
+		if (Array.isArray(node)) {
+			return node.map(sortNode);
+		}
+
+		if (isRecord(node)) {
+			const ordered: Record<string, unknown> = {};
+			const keys = Object.keys(node).sort((a, b) => {
+				const aPriority = priorityMap.get(a);
+				const bPriority = priorityMap.get(b);
+
+				if (aPriority !== undefined && bPriority !== undefined) {
+					return aPriority - bPriority;
+				}
+
+				if (aPriority !== undefined) {
+					return -1;
+				}
+
+				if (bPriority !== undefined) {
+					return 1;
+				}
+
+				const byNormalized = normalizeKey(a).localeCompare(normalizeKey(b));
+				if (byNormalized !== 0) {
+					return byNormalized;
+				}
+
+				return a.localeCompare(b);
+			});
+
+			for (const key of keys) {
+				ordered[key] = sortNode(node[key]);
+			}
+
+			return ordered;
+		}
+
+		return node;
+	}
+
+	return sortNode(value);
+}
+
+function stringifyOrderedJson(
+	value: unknown,
+	priorityOrder: string[] = preferredJsonKeyOrder,
+): string {
+	return JSON.stringify(sortJsonKeys(value, priorityOrder), null, 2);
 }
 
 function ensureResourceRef(resource: { id?: string; type?: string }): {
@@ -487,7 +565,9 @@ function JsonTreeNode({ value, path, depth, label, index }: JsonTreeProps) {
 function App() {
 	const [workspace, setWorkspace] = useState<Workspace>("upgrade");
 	const [conversionMode, setConversionMode] = useState<ConversionMode>("2to3");
-	const [inputText, setInputText] = useState(JSON.stringify(sampleV2, null, 2));
+	const [inputText, setInputText] = useState(
+		stringifyOrderedJson(sampleV2, preferredJsonKeyOrder),
+	);
 	const [outputText, setOutputText] = useState("");
 	const [diffInputText, setDiffInputText] = useState("");
 	const [showDiff, setShowDiff] = useState(true);
@@ -530,7 +610,9 @@ function App() {
 	const fetchedType = useMemo(() => getTypeLabel(fetchedJson), [fetchedJson]);
 
 	function loadSample() {
-		setInputText(JSON.stringify(sampleForMode(conversionMode), null, 2));
+		setInputText(
+			stringifyOrderedJson(sampleForMode(conversionMode), preferredJsonKeyOrder),
+		);
 		setOutputText("");
 		setDiffInputText("");
 		setConversionError(null);
@@ -548,8 +630,8 @@ function App() {
 						? serializeToPresentation4(parsed)
 						: serializeToPresentation3(parsed);
 
-			setDiffInputText(JSON.stringify(parsed, null, 2));
-			setOutputText(JSON.stringify(converted, null, 2));
+			setDiffInputText(stringifyOrderedJson(parsed, preferredJsonKeyOrder));
+			setOutputText(stringifyOrderedJson(converted, preferredJsonKeyOrder));
 		} catch (error) {
 			const message =
 				error instanceof Error ? error.message : "Unknown conversion error";
@@ -672,7 +754,10 @@ function App() {
 									onClick={() => {
 										setConversionMode(mode.id);
 										setInputText(
-											JSON.stringify(sampleForMode(mode.id), null, 2),
+											stringifyOrderedJson(
+												sampleForMode(mode.id),
+												preferredJsonKeyOrder,
+											),
 										);
 										setConversionError(null);
 										setOutputText("");
@@ -757,7 +842,8 @@ function App() {
 										oldValue={diffInputText}
 										newValue={outputText}
 										splitView
-										hideLineNumbers={false}
+                    hideLineNumbers={false}
+										compareMethod={DiffMethod.WORDS}
 										leftTitle="Input"
 										rightTitle="Output"
 									/>

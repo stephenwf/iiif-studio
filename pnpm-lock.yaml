@@ -10,10 +10,10 @@ importers:
     dependencies:
       '@iiif/helpers':
         specifier: https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@34?t=1
-        version: https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@34?t=1(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@c522dca)
+        version: https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@34?t=1(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@9070a1d)
       '@iiif/parser':
-        specifier: https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@c522dca
-        version: https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@c522dca
+        specifier: https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@9070a1d
+        version: https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@9070a1d
       react:
         specifier: ^19.2.0
         version: 19.2.4
@@ -410,8 +410,8 @@ packages:
     peerDependencies:
       '@iiif/parser': https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@60?cache=5
 
-  '@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@c522dca':
-    resolution: {tarball: https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@c522dca}
+  '@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@9070a1d':
+    resolution: {tarball: https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@9070a1d}
     version: 2.2.9
     hasBin: true
 
@@ -1594,16 +1594,16 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@34?t=1(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@c522dca)':
+  '@iiif/helpers@https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@34?t=1(@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@9070a1d)':
     dependencies:
-      '@iiif/parser': https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@c522dca
+      '@iiif/parser': https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@9070a1d
       '@types/geojson': 7946.0.13
     optionalDependencies:
       abs-svg-path: 0.1.1
       parse-svg-path: 0.1.2
       svg-arc-to-cubic-bezier: 3.2.0
 
-  '@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@c522dca':
+  '@iiif/parser@https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@9070a1d':
     dependencies:
       picocolors: 1.1.1
 
