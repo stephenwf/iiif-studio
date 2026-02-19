@@ -11,7 +11,7 @@
 	},
 	"dependencies": {
 		"@iiif/helpers": "https://pkg.pr.new/IIIF-Commons/iiif-helpers/@iiif/helpers@34?t=1",
-		"@iiif/parser": "https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@9070a1d",
+		"@iiif/parser": "https://pkg.pr.new/IIIF-Commons/parser/@iiif/parser@034c3e1",
 		"react": "^19.2.0",
 		"react-diff-viewer-continued": "^4.1.2",
 		"react-dom": "^19.2.0"
