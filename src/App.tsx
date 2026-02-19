@@ -136,7 +136,7 @@ const sampleV4 = {
 };
 
 const sampleValidationUrl =
-	"https://iiif.io/api/cookbook/recipe/0001-mvm-image/manifest.json";
+	"https://gist.githubusercontent.com/stephenwf/e84ca33329bb058b9346dfc0d3b66865/raw/8d6ae26fbf449c216b8cab1d8e32d807983b64c8/invalid-manifest.json";
 
 const conversionModes: Array<{
 	id: ConversionMode;
